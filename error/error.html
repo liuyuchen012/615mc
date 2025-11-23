@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错误码查询</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .error-display {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid #e74c3c;
+        }
+        
+        .error-code {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+        
+        .error-message {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .error-description {
+            color: #7f8c8d;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .input-section {
+            margin: 30px 0;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .common-errors {
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .common-errors h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .error-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .error-item {
+            background-color: #f1f2f6;
+            border-radius: 6px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .error-item:hover {
+            background-color: #dfe4ea;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .error-code {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>错误码查询</h1>
+        <p class="subtitle">通过错误码了解系统问题</p>
+        
+        <div class="error-display">
+            <div class="error-code" id="errorCode">404</div>
+            <div class="error-message" id="errorMessage">页面未找到</div>
+            <div class="error-description" id="errorDescription">您请求的页面不存在。请检查URL是否正确，或返回首页。</div>
+        </div>
+      
+        <div class="footer">
+            <p>通过URL参数显示错误码: error.html?code=404</p>
+        </div>
+    </div>
+
+    <script>
+        // 错误码与对应信息的映射
+        const errorMessages = {
+            '400': {
+                message: '错误请求',
+                description: '服务器无法理解请求的格式，客户端不应重复提交此请求。'
+            },
+            '401': {
+                message: '未授权',
+                description: '请求需要用户验证。请检查您的凭据或联系管理员。'
+            },
+            '403': {
+                message: '禁止访问',
+                description: '服务器理解请求，但拒绝执行。您可能没有访问此资源的权限。'
+            },
+            '404': {
+                message: '页面未找到',
+                description: '您请求的页面不存在。请检查URL是否正确，或返回首页。'
+            },
+            '500': {
+                message: '服务器内部错误',
+                description: '服务器遇到了一个意外情况，无法完成请求。请稍后重试。'
+            },
+            '503': {
+                message: '服务不可用',
+                description: '服务器暂时无法处理请求，通常是由于过载或维护。请稍后重试。'
+            },
+            'e_01404':{
+                message: '测试链接不存在',
+                description: '您请求的测试不存在。请检查考试代码是否正确。'
+            }
+        };
+
+        // 获取URL参数
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 显示错误信息
+        function showError(code) {
+            const errorCodeElement = document.getElementById('errorCode');
+            const errorMessageElement = document.getElementById('errorMessage');
+            const errorDescriptionElement = document.getElementById('errorDescription');
+            
+            if (errorMessages[code]) {
+                errorCodeElement.textContent = code;
+                errorMessageElement.textContent = errorMessages[code].message;
+                errorDescriptionElement.textContent = errorMessages[code].description;
+            } else {
+                errorCodeElement.textContent = code;
+                errorMessageElement.textContent = '未知错误';
+                errorDescriptionElement.textContent = '此错误码没有对应的错误信息。';
+            }
+            
+            // 更新URL但不刷新页面
+            const newUrl = `${window.location.pathname}?code=${code}`;
+            window.history.replaceState(null, '', newUrl);
+        }
+
+        // 页面加载时检查URL参数
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeFromUrl = getQueryParam('code');
+            if (codeFromUrl) {
+                showError(codeFromUrl);
+                document.getElementById('codeInput').value = codeFromUrl;
+            }
+            
+            // 按钮点击事件
+            document.getElementById('showErrorBtn').addEventListener('click', function() {
+                const code = document.getElementById('codeInput').value.trim();
+                if (code) {
+                    showError(code);
+                }
+            });
+            
+            // 常见错误码点击事件
+            document.querySelectorAll('.error-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const code = this.getAttribute('data-code');
+                    document.getElementById('codeInput').value = code;
+                    showError(code);
+                });
+            });
+            
+            // 输入框回车事件
+            document.getElementById('codeInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const code = this.value.trim();
+                    if (code) {
+                        showError(code);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
